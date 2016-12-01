@@ -5,8 +5,8 @@ import {Link, browserHistory} from 'react-router'
 export default function Layout({children, location}) {
 
   const options = [
-    {key: '/digests/page/1', title: '项目管理'},
-    {key: '/digests/rules', title: '进程管理'},
+    {key: '/projects', title: '项目管理'},
+    {key: '/issues', title: '进程管理'},
   ];
 
   const onClick = ({item, key, keyPath}) => {
@@ -20,7 +20,7 @@ export default function Layout({children, location}) {
       <div className="ant-layout-topaside">
         <div className="ant-layout-header">
           <div className="ant-layout-wrapper">
-            <div className="ant-layout-logo">xxx</div>
+            <div className="ant-layout-logo">BIM 管理系统</div>
           </div>
         </div>
         <div className="ant-layout-wrapper">

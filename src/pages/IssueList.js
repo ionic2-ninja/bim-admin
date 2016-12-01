@@ -11,15 +11,20 @@ const FormItem = Form.Item;
 
 const columns = [{
   title: '名称',
-  dataIndex: 'name',
-  key: 'name',
+  dataIndex: 'title',
+  key: 'title',
   render: text => <a href="#">{text}</a>,
+}, {
+  title: '对应组件',
+  dataIndex: 'img',
+  key: 'img',
+  render: text => <img width={200} src={text} />,
 },  {
   title: '操作',
   key: 'action',
   render: (text, record) => (
     <span>
-      <a href="#">进入 一 {record.name}</a>
+      <a href="#">标记为已解决</a>
       <span className="ant-divider" />
       <a href="#">删除</a>
       <span className="ant-divider" />
@@ -32,16 +37,17 @@ const columns = [{
 
 const data = [{
   key: '1',
-  name: 'xx车站图',
+  title: '此处尚未完成',
+  block: 'Door',
+  img: '/door.png',
 }, {
   key: '2',
-  name: 'yy市郊野汽车站图',
-}, {
-  key: '3',
-  name: 'zz区中心站图',
+  title: '这个地方有漏洞，需要解决！！',
+  block: 'Outer Wall V',
+  img: '/img1.png',
 }];
 
-class ProjectList extends Component {
+class IssueList extends Component {
 
   render() {
     return (
@@ -61,7 +67,7 @@ class ProjectList extends Component {
     const { getFieldDecorator } = this.props.form;
 
     return (
-      <Modal title="新增项目" visible={true}
+      <Modal title="新增报告" visible={false}
              onOk={this.handleOk.bind(this)} onCancel={this.handleCancel.bind(this)}
       >
         <Form horizontal>
@@ -79,7 +85,18 @@ class ProjectList extends Component {
           <FormItem
             {...formItemLayout}
             hasFeedback
-            label="导入IFC"
+            label="报告所属组件"
+          >
+            {
+              getFieldDecorator('block', { rules: [requireRule] })(
+                <Input type="text" placeholder="" />
+              )
+            }
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            hasFeedback
+            label="上传图片或视频"
           >
             <Upload {...this.uploadProps}>
               <Button type="ghost">
@@ -94,7 +111,7 @@ class ProjectList extends Component {
           >
             {
               getFieldDecorator('content', {  })(
-                <Input type="textarea" rows={10} placeholder="详细说明" />
+                <Input type="textarea" rows={5} placeholder="详细说明" />
               )
             }
           </FormItem>
@@ -119,4 +136,4 @@ class ProjectList extends Component {
 
 }
 
-export default ProjectList = Form.create()(ProjectList);
+export default IssueList = Form.create()(IssueList);
