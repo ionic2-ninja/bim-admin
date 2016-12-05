@@ -65,3 +65,8 @@ body {
   font-size: 12px;
   color: #999;
 }
+
+#bim canvas {
+  width: 100% !important;
+  height: 700px !important;
+}

@@ -29,7 +29,7 @@ const columns = [{
       <a href="#">删除</a>
       <span className="ant-divider" />
       <a href="#" className="ant-dropdown-link">
-        更多操作<Icon type="down" />
+        更多操作<Icon type="down" />bimsurfer
       </a>
     </span>
   ),

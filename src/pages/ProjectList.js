@@ -5,6 +5,8 @@
 'use strict';
 
 import React, { Component } from 'react';
+import {login, getProjectsTree} from '../services/BimService';
+import {Link} from 'react-router';
 
 import { Table, Icon, Modal, Form, Input, Tooltip, Upload, message, Button } from 'antd';
 const FormItem = Form.Item;
@@ -13,13 +15,13 @@ const columns = [{
   title: '名称',
   dataIndex: 'name',
   key: 'name',
-  render: text => <a href="#">{text}</a>,
+  render: text => <p>{text}</p>,
 },  {
   title: '操作',
   key: 'action',
   render: (text, record) => (
     <span>
-      <a href="#">进入 一 {record.name}</a>
+      <Link to={{pathname: '/project', query: {oid: record.oid, lastRevisionId: record.lastRevisionId}}}>进入 一 {record.name}</Link>
       <span className="ant-divider" />
       <a href="#">删除</a>
       <span className="ant-divider" />
@@ -43,10 +45,34 @@ const data = [{
 
 class ProjectList extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: null,
+    }
+  }
+
+  componentDidMount() {
+    login().then(() => {
+      getProjectsTree().then((data) => {
+        console.log('tree', data);
+        this.setState({
+          data: data.map((item) => {
+            item.key = item.id;
+            item.children = undefined;
+            return item;
+          }),
+        });
+      });
+    })
+  }
+
   render() {
     return (
-      <div>
-        <Table columns={columns} dataSource={data} />
+      <div style={{height: 2000}}>
+        <div id="bim"></div>
+        <Table columns={columns} dataSource={this.state.data} />
         {this._renderModal()}
       </div>
     );
@@ -61,7 +87,7 @@ class ProjectList extends Component {
     const { getFieldDecorator } = this.props.form;
 
     return (
-      <Modal title="新增项目" visible={true}
+      <Modal title="新增项目" visible={false}
              onOk={this.handleOk.bind(this)} onCancel={this.handleCancel.bind(this)}
       >
         <Form horizontal>
