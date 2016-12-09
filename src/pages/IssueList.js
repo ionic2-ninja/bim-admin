@@ -4,7 +4,7 @@
 
 'use strict';
 
-import React, { Component } from 'react';
+import  React, { Component } from 'react';
 
 import { Table, Icon, Modal, Form, Input, Tooltip, Upload, message, Button } from 'antd';
 const FormItem = Form.Item;
