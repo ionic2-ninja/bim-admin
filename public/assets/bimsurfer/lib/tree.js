@@ -239,14 +239,14 @@ var ModelTreeView = (function () {
       while (_dom) {
         if (_dom.getAttribute('skip') != 'true') {
           _this._cleanSelected(_dom)
-          _dom.style.backgroundColor = _this.deselectedColor
+          _dom.style.color = _this.deselectedColor
         }
         _dom = _dom.nextElementSibling
       }
     }
 
     this._select = function (_dom) {
-      _dom.style.backgroundColor = _this.selectedColor
+      _dom.style.color = _this.selectedColor
       var data = JSON.parse(_dom.getAttribute('data'))
       data.selected = true
       _dom.setAttribute('data', JSON.stringify(data))
