@@ -6,7 +6,7 @@ export default function Layout({children, location}) {
 
   const options = [
     {key: '/projects', title: '项目管理'},
-    {key: '/issues', title: '进程管理'},
+    // {key: '/issues', title: '进程管理'},
   ];
 
   const onClick = ({item, key, keyPath}) => {

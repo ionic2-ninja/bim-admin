@@ -1,7 +1,6 @@
 "use strict";
-// import {Injectable} from '@angular/core';
 var api_1 = require('./api');
-// @Injectable()
+var emiya_js_utils_1 = require('emiya-js-utils');
 var Bim = (function () {
     function Bim() {
         var _this = this;
@@ -16,9 +15,9 @@ var Bim = (function () {
         this.init = function () {
             var lib0 = new Promise(function (resolve, reject) {
                 try {
-                    _this.loadScripts(_this.libHost + '/apps/bimserverjavascriptapi/js/', ['bimserverapiwebsocket.js', 'bimserverclient.js', 'bimserverapipromise.js', 'ifc2x3tc1.js', 'ifc4.js', 'model.js', 'translations_en.js'], function () {
+                    _this.loadScripts(_this.libHost + '/apps/bimserverjavascriptapi/js/', ['bimserverapiwebsocket.js', 'bimserverclient.js', 'bimserverapipromise.js', 'ifc2x3tc1.js', 'ifc4.js', 'model.js', 'translations_en.js']).then(function () {
                         resolve();
-                    }, function (err) {
+                    }).catch(function (err) {
                         reject(err);
                     });
                 }
@@ -28,9 +27,9 @@ var Bim = (function () {
             });
             var lib1 = new Promise(function (resolve, reject) {
                 try {
-                    _this.loadScripts(_this.localLibPrefix + _this.localLibHost, ['require.js', 'xeogl.js'], function () {
+                    _this.loadScriptsSync(_this.localLibPrefix + _this.localLibHost, ['touch.js', 'require.js', 'xeogl.js', 'tree.js']).then(function () {
                         resolve();
-                    }, function (err) {
+                    }).catch(function (err) {
                         reject(err);
                     });
                 }
@@ -88,7 +87,7 @@ var Bim = (function () {
                     "ifc2x3tc1.js",
                     "ifc4.js",
                     "translations_en.js",
-                ], function () {
+                ]).then(function () {
                     var instance = new api_1.Api(_this.address, _this.username, _this.password);
                     instance.login().then(function () {
                         instance.loadLib().then(function () {
@@ -102,56 +101,81 @@ var Bim = (function () {
                         _this.instance = null;
                         reject(err);
                     });
-                }, function (err) {
+                }).catch(function (err) {
                     reject(err);
                 });
             });
         };
-        this.loadScript = function (url, callback, onError, timeout) {
+        this.loadScript = function (url, timeout) {
             if (timeout === void 0) { timeout = 30000; }
-            var script = document.createElement("script");
-            script.type = "text/javascript";
-            var timer;
-            if (script['readyState']) {
-                script['onreadystatechange'] = function () {
-                    if (script['readyState'] == "loaded" || script['readyState'] == "complete") {
-                        script['onreadystatechange'] = null;
+            return new Promise(function (resolve, reject) {
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                var timer;
+                if (script['readyState']) {
+                    script['onreadystatechange'] = function () {
+                        if (script['readyState'] == "loaded" || script['readyState'] == "complete") {
+                            script['onreadystatechange'] = null;
+                            clearTimeout(timer);
+                            timer = null;
+                            reject({ url: url, msg: 404 });
+                        }
+                    };
+                }
+                else {
+                    script.onload = function (code) {
                         clearTimeout(timer);
                         timer = null;
-                        callback && callback(200, url);
-                    }
-                };
-            }
-            else {
-                script.onload = function () {
-                    clearTimeout(timer);
-                    timer = null;
-                    callback && callback(200, url);
-                };
-                script.onerror = function (err) {
-                    clearTimeout(timer);
-                    timer = null;
-                    onError && onError(err, url);
-                };
-            }
-            if (timeout > 0)
-                timer = setTimeout(function () {
-                    onError && onError('timeout', url);
-                    timer = null;
-                }, timeout);
-            script.src = url;
-            document.getElementsByTagName("head")[0].appendChild(script);
+                        resolve({ url: url, msg: code });
+                    };
+                    script.onerror = function (err) {
+                        clearTimeout(timer);
+                        timer = null;
+                        reject({ url: url, msg: err });
+                    };
+                }
+                if (timeout > 0)
+                    timer = setTimeout(function () {
+                        reject({ url: url, msg: 400 });
+                        timer = null;
+                    }, timeout);
+                script.src = url;
+                document.getElementsByTagName("head")[0].appendChild(script);
+            });
         };
-        this.loadScripts = function (baseAddress, filenames, callback, onError, timeout) {
+        this.loadScriptsSync = function (baseAddress, filenames, timeout) {
+            if (baseAddress === void 0) { baseAddress = ''; }
+            return new Promise(function (resolve, reject) {
+                var counter = filenames.length;
+                var index = 0;
+                var recursive = function () {
+                    if (index < counter)
+                        _this.loadScript(baseAddress + filenames[index++], timeout).then(function () {
+                            recursive();
+                        }).catch(function (err) {
+                            reject(err);
+                        });
+                    else
+                        resolve();
+                };
+                recursive();
+            });
+        };
+        this.loadScripts = function (baseAddress, filenames, timeout) {
+            if (baseAddress === void 0) { baseAddress = ''; }
             var counter = filenames.length;
             var index = 0;
-            var recursive = function () {
-                if (index < counter)
-                    _this.loadScript(baseAddress + filenames[index++], recursive, onError, timeout);
-                else if (callback)
-                    callback();
-            };
-            recursive();
+            var list = [];
+            for (var c in filenames)
+                list.push(_this.loadScript(baseAddress + filenames[c]), timeout);
+            return Promise.all(list);
+            //   let recursive = () => {
+            //     if (index < counter)
+            //       this.loadScript(baseAddress + filenames[index++], recursive, onError, timeout)
+            //     else if (callback)
+            //       callback()
+            //   }
+            // recursive()
         };
         window['version'] = new Date().getTime();
         // This has been moved to bimserverapi, can be removed in a day
@@ -163,6 +187,8 @@ var Bim = (function () {
             baseUrl: this.localLibPrefix,
             urlArgs: "bust=" + window['version']
         };
+        window['deepCopy'] = emiya_js_utils_1.Utils.deepCopy;
+        window['mergeObject'] = emiya_js_utils_1.Utils.mergeObject;
     }
     return Bim;
 }());

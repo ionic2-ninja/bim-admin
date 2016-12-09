@@ -1,5 +1,5 @@
 "use strict";
-var emiya_js_utils_1 = require('emiya-js-utils/Utils');
+var emiya_js_utils_1 = require('emiya-js-utils');
 var viewControl_1 = require('./viewControl');
 var Api = (function () {
     function Api(address, username, password) {
@@ -24,7 +24,6 @@ var Api = (function () {
             });
         };
         this.login = function () {
-            console.log(_this);
             if (_this.token === null || _this.token === undefined)
                 return new Promise(function (resolve, reject) {
                     _this.client = new window['BimServerClient'](_this.address);
@@ -59,6 +58,9 @@ var Api = (function () {
                 });
             });
         };
+        this.logout = function (cb) {
+            _this.client && _this.client.logout && _this.client.logout(cb);
+        };
         this.getAllProjects = function (params) {
             params = emiya_js_utils_1.Utils.mergeObject(params, {
                 onlyTopLevel: false,
@@ -86,7 +88,7 @@ var Api = (function () {
                     roid: roid,
                     schema: "ifc2x3tc1" // < TODO: Deduce automatically
                 }).then(function (data) {
-                    resolve(new viewControl_1.viewControl(data, bimSurfer));
+                    resolve(new viewControl_1.viewControl(data, bimSurfer, _this.MetaDataRenderer, roid));
                 }).catch(function (err) {
                     reject(err);
                 });
@@ -151,8 +153,15 @@ var Api = (function () {
                         domNode: 'dataContainer' + bust
                     });
                     metadata.addModel({ name: "", id: roid, model: model });
+                    console.log(123, metadata);
+                    console.log(321, model);
+                    console.log(model.model.get('43188906', function (w, a, b) {
+                        console.log(w);
+                        console.log(b);
+                    }));
                     bimSurfer.on("selection-changed", function (selected) {
                         domtree.setSelected(selected, domtree.SELECT_EXCLUSIVE);
+                        console.log(selected);
                         metadata.setSelected(selected);
                     });
                     domtree.on("click", function (oid, selected) {

@@ -15427,65 +15427,6 @@ var Canvas2Image = (function () {
 
       body.appendChild(div);
       //this.canvasDiv.appendChild(div)
-      function touchHandler(event) {
-
-        var touches = event.changedTouches,
-          first = touches[0],
-          type = "";
-        switch (event.type) {
-          case "touchstart":
-            type = "mousedown";
-            break;
-          case "touchmove":
-            type = "mousemove";
-            break;
-          case "touchend":
-            type = "mouseup";
-            break;
-          default:
-            return;
-        }
-
-        if (event.type == 'touchstart' || event.type == 'touchend') {
-          if (!window.scrollStyle) {
-            window.scrollStyle = document.createElement('style')
-            window.scrollStyle.id = 'scrollStyle'
-            body.appendChild(window.scrollStyle)
-          }
-          if (event.type == 'touchstart') {
-            document.getElementById('scrollStyle').innerHTML = '.scroll-content{overflow: hidden}'
-            //alert(0)
-          }
-          else {
-            document.getElementById('scrollStyle').innerHTML = ''
-            //alert(1)
-          }
-        }
-
-        // initMouseEvent(type, canBubble, cancelable, view, clickCount,
-        //                screenX, screenY, clientX, clientY, ctrlKey,
-        //                altKey, shiftKey, metaKey, button, relatedTarget);
-
-        var simulatedEvent = document.createEvent("MouseEvent");
-        simulatedEvent.initMouseEvent(type, true, true, window, 1,
-          first.screenX, first.screenY,
-          first.clientX, first.clientY, false,
-          false, false, false, 0/*left*/, null);
-
-        first.target.dispatchEvent(simulatedEvent);
-        //event.preventDefault();
-        //event.stopPropagation()
-      }
-
-      function init() {
-        div.addEventListener("touchstart", touchHandler, true);
-        div.addEventListener("touchmove", touchHandler, true);
-        div.addEventListener("touchend", touchHandler, true);
-        div.addEventListener("touchcancel", touchHandler, true);
-
-      }
-
-      init()
 
       this.overlay = div;
     },
@@ -15531,10 +15472,15 @@ var Canvas2Image = (function () {
     },
 
     _getElementXY: function (e) {
-      var x = 0, y = 0;
+      var x = 0, y = 0, org = e;
       while (e) {
-        x += (e.offsetLeft-e.scrollLeft);
-        y += (e.offsetTop-e.scrollTop);
+        if (org != e) {
+          x += (e.offsetLeft - e.scrollLeft);
+          y += (e.offsetTop - e.scrollTop);
+        } else {
+          x += (e.offsetLeft );
+          y += (e.offsetTop );
+        }
         e = e.offsetParent;
       }
       // var dom=e
@@ -25005,6 +24951,7 @@ xeogl.PathGeometry = xeogl.Geometry.extend({
 
       // Capture input events and publish them on this component
 
+
       document.addEventListener("keydown",
         this._keyDownListener = function (e) {
 
@@ -25067,6 +25014,252 @@ xeogl.PathGeometry = xeogl.Geometry.extend({
             }
           }
         });
+
+
+      var touchstart = function (e, org) {
+
+        if (!self.enabled) {
+          return;
+        }
+
+        switch (e.which) {
+
+          case 1:// Left button
+            self.mouseDownLeft = true;
+            break;
+
+          case 2:// Middle/both buttons
+            self.mouseDownMiddle = true;
+            break;
+
+          case 3:// Right button
+            self.mouseDownRight = true;
+            break;
+
+          default:
+            break;
+        }
+
+        var coords = self._getClickCoordsWithinElement(e);
+
+        /**
+         * Fired whenever the mouse is pressed over the parent
+         * {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+         * @event mousedown
+         * @param value {[Number, Number]} The mouse coordinates within the {{#crossLink "Canvas"}}Canvas{{/crossLink}},
+         */
+        self.fire("mousedown", coords, true);
+
+        if (self.mouseover) {
+          org.preventDefault();
+        }
+      }
+
+      var touchmove = function (e, org) {
+
+        if (!self.enabled) {
+          return;
+        }
+
+        var coords = self._getClickCoordsWithinElement(e);
+
+        /**
+         * Fired whenever the mouse is moved over the parent
+         * {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+         * @event mousedown
+         * @param value {[Number, Number]} The mouse coordinates within the {{#crossLink "Canvas"}}Canvas{{/crossLink}},
+         */
+        self.fire("mousemove", coords, true);
+
+        if (self.mouseover) {
+          org.preventDefault();
+        }
+      }
+
+      var touchend = function (e, org) {
+
+        if (!self.enabled) {
+          return;
+        }
+
+        switch (e.which) {
+
+          case 1:// Left button
+            self.mouseDownLeft = false;
+            break;
+
+          case 2:// Middle/both buttons
+            self.mouseDownMiddle = false;
+            break;
+
+          case 3:// Right button
+            self.mouseDownRight = false;
+            break;
+
+          default:
+            break;
+        }
+
+        var coords = self._getClickCoordsWithinElement(e);
+
+        /**
+         * Fired whenever the mouse is released over the parent
+         * {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+         * @event mouseup
+         * @param value {[Number, Number]} The mouse coordinates within the {{#crossLink "Canvas"}}Canvas{{/crossLink}},
+         */
+        self.fire("mouseup", coords, true);
+
+        if (self.mouseover) {
+          org.preventDefault();
+        }
+      }
+
+      var touchenter = function (e) {
+
+        if (!self.enabled) {
+          return;
+        }
+
+        self.mouseover = true;
+
+        var coords = self._getClickCoordsWithinElement(e);
+
+        /**
+         * Fired whenever the mouse is moved into of the parent
+         * {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+         * @event mouseenter
+         * @param value {[Number, Number]} The mouse coordinates within the {{#crossLink "Canvas"}}Canvas{{/crossLink}},
+         */
+        self.fire("mouseenter", coords, true);
+      }
+
+      var touchleave = function (e) {
+
+        if (!self.enabled) {
+          return;
+        }
+
+        self.mouseover = false;
+
+        var coords = self._getClickCoordsWithinElement(e);
+
+        /**
+         * Fired whenever the mouse is moved out of the parent
+         * {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+         * @event mouseleave
+         * @param value {[Number, Number]} The mouse coordinates within the {{#crossLink "Canvas"}}Canvas{{/crossLink}},
+         */
+        self.fire("mouseleave", coords, true);
+      }
+
+      var touchwheel = function (inorout, e) {
+        // console.log(e)
+        //   console.log(d)
+        if (!self.enabled) {
+          return;
+        }
+
+        //var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+        /**
+         * Fired whenever the mouse wheel is moved over the parent
+         * {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+         * @event mousewheel
+         * @param delta {Number} The mouse wheel delta,
+         */
+        //console.log(delta)
+        self.fire("mousewheel", inorout, true);
+
+
+        if (self.mouseover) {
+          e.preventDefault();
+        }
+      }
+
+      function touchHandler(event) {
+
+        var touches = event.changedTouches,
+          first = touches[0],
+          type = "";
+        switch (event.type) {
+          case "touchstart":
+            type = "mousedown";
+            break;
+          case "touchmove":
+            type = "mousemove";
+            break;
+          case "touchend":
+            type = "mouseup";
+            break;
+          default:
+            return;
+        }
+
+        if (event.type == 'touchstart' || event.type == 'touchend') {
+          if (!window.scrollStyle) {
+            window.scrollStyle = document.createElement('style')
+            window.scrollStyle.id = 'scrollStyle'
+            document.body.appendChild(window.scrollStyle)
+          }
+          if (event.type == 'touchstart') {
+            document.getElementById('scrollStyle').innerHTML = '.scroll-content{overflow: hidden}'
+            //alert(0)
+          }
+          else {
+            document.getElementById('scrollStyle').innerHTML = ''
+            //alert(1)
+          }
+        }
+
+        // initMouseEvent(type, canBubble, cancelable, view, clickCount,
+        //                screenX, screenY, clientX, clientY, ctrlKey,
+        //                altKey, shiftKey, metaKey, button, relatedTarget);
+
+        var simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent(type, true, true, window, 1,
+          first.screenX, first.screenY,
+          first.clientX, first.clientY, false,
+          false, false, false, 0/*left*/, first.target);
+        simulatedEvent = window.mergeObject({}, simulatedEvent)
+        simulatedEvent.target = first.target
+        simulatedEvent.preventDefault = event.preventDefault
+        //console.log(simulatedEvent)
+        //first.target.dispatchEvent(simulatedEvent);
+        //event.preventDefault();
+        //event.stopPropagation()
+        if (event.type == 'touchstart') {
+          touchstart(simulatedEvent, event)
+        }
+        else if (event.type != 'touchend') {
+          touchmove(simulatedEvent, event)
+        }
+        else {
+          touchend(simulatedEvent, event)
+        }
+
+      }
+
+
+      function init() {
+        cfg.element.addEventListener("touchstart", touchHandler);
+        cfg.element.addEventListener("touchmove", touchHandler);
+        cfg.element.addEventListener("touchend", touchHandler, true);
+        //cfg.element.addEventListener("touchcancel", touchHandler, true);
+        //cfg.element.addEventListener("touchstart", touchenter)
+        //cfg.element.addEventListener("touchend", touchleave)
+
+        window['touch'].on(cfg.element, 'pinchin', function (ev) {
+          touchwheel(-1, ev)
+        });
+
+        window['touch'].on(cfg.element, 'pinchout', function (ev) {
+          touchwheel(1, ev)
+        });
+
+      }
+
+      init()
 
       cfg.element.addEventListener("mouseenter",
         this._mouseDownListener = function (e) {
@@ -25255,7 +25448,8 @@ xeogl.PathGeometry = xeogl.Geometry.extend({
 
       cfg.element.addEventListener("mousewheel",
         this._mouseWheelListener = function (e, d) {
-
+          // console.log(e)
+          //   console.log(d)
           if (!self.enabled) {
             return;
           }
@@ -25268,7 +25462,9 @@ xeogl.PathGeometry = xeogl.Geometry.extend({
            * @event mousewheel
            * @param delta {Number} The mouse wheel delta,
            */
+          console.log(delta)
           self.fire("mousewheel", delta, true);
+
 
           if (self.mouseover) {
             e.preventDefault();
@@ -31325,7 +31521,7 @@ xeogl.GLTFLoaderUtils = Object.create(Object, {
        *     * **"clampToEdge"** -  causes *S* coordinates to be clamped to the size of the texture.
        *     * **"mirroredRepeat"** - causes the *S* coordinate to be set to the fractional part of the texture coordinate
        *     if the integer part of *S* is even; if the integer part of *S* is odd, then the *S* texture coordinate is
-       *     set to *1 - frac ⁡ S* , where *frac ⁡ S* represents the fractional part of *S*.
+       *     set to *1 - frac ? S* , where *frac ? S* represents the fractional part of *S*.
        *     * **"repeat"** - **(default)** - causes the integer part of the *S* coordinate to be ignored; xeogl uses only the
        *     fractional part, thereby creating a repeating pattern.
        *
@@ -31377,7 +31573,7 @@ xeogl.GLTFLoaderUtils = Object.create(Object, {
        *     * **"clampToEdge"** -  Causes *T* coordinates to be clamped to the size of the texture.
        *     * **"mirroredRepeat"** - Causes the *T* coordinate to be set to the fractional part of the texture coordinate
        *     if the integer part of *T* is even; if the integer part of *T* is odd, then the *T* texture coordinate is
-       *     set to *1 - frac ⁡ S* , where *frac ⁡ S* represents the fractional part of *T*.
+       *     set to *1 - frac ? S* , where *frac ? S* represents the fractional part of *T*.
        *     * **"repeat"** - **(default)** - Causes the integer part of the *T* coordinate to be ignored; xeogl uses only the
        *     fractional part, thereby creating a repeating pattern.
        *
