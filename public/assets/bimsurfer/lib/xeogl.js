@@ -49,7 +49,7 @@
         return info;
       }
 
-      var gl = canvas.getContext("webgl", {antialias: true}) || canvas.getContext("experimental-webgl", {antialias: true});
+      var gl = canvas.getContext("webgl", {antialias: true, preserveDrawingBuffer:true}) || canvas.getContext("experimental-webgl", {antialias: true, preserveDrawingBuffer:true});
 
       info.WEBGL = !!gl;
 
@@ -15508,6 +15508,7 @@ var Canvas2Image = (function () {
 
       if (cfg.webgl2) {
         try {
+          this.contextAttr.preserveDrawingBuffer = true;
           this.gl = this.canvas.getContext("webgl2", this.contextAttr);
         } catch (e) { // Try with next context name
         }
@@ -15521,6 +15522,7 @@ var Canvas2Image = (function () {
       if (!this.gl) {
         for (var i = 0; !this.gl && i < this._WEBGL_CONTEXT_NAMES.length; i++) {
           try {
+            this.contextAttr.preserveDrawingBuffer = true;
             this.gl = this.canvas.getContext(this._WEBGL_CONTEXT_NAMES[i], this.contextAttr);
           } catch (e) { // Try with next context name
           }
