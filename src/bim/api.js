@@ -1,6 +1,6 @@
 "use strict";
-var emiya_js_utils_1 = require('emiya-js-utils');
-var viewControl_1 = require('./viewControl');
+var emiya_js_utils_1 = require("emiya-js-utils");
+var viewControl_1 = require("./viewControl");
 var Api = (function () {
     function Api(address, username, password) {
         var _this = this;
@@ -88,8 +88,8 @@ var Api = (function () {
                     roid: roid,
                     schema: "ifc2x3tc1" // < TODO: Deduce automatically
                 }).then(function (data) {
-                    resolve(new viewControl_1.viewControl(data, bimSurfer, _this.MetaDataRenderer, roid));
-                }).catch(function (err) {
+                    resolve(new viewControl_1.viewControl(data, bimSurfer, _this.MetaDataRenderer, poid, roid, id));
+                })["catch"](function (err) {
                     reject(err);
                 });
             });
@@ -276,7 +276,7 @@ var Api = (function () {
             dom.append(_dom);
             dom = _dom;
         }
-        var _loop_1 = function(c) {
+        var _loop_1 = function (c) {
             var sub = document.createElement('li');
             sub.style.margin = '3px';
             sub.style.fontSize = '20px';
@@ -347,7 +347,7 @@ var Api = (function () {
             dom.append(_dom);
             dom = _dom;
         }
-        var _loop_2 = function(c) {
+        var _loop_2 = function (c) {
             var sub = document.createElement('li');
             sub.style.margin = '3px';
             sub.style.fontSize = '20px';

@@ -1,6 +1,6 @@
 "use strict";
-var api_1 = require('./api');
-var emiya_js_utils_1 = require('emiya-js-utils');
+var api_1 = require("./api");
+var emiya_js_utils_1 = require("emiya-js-utils");
 var Bim = (function () {
     function Bim() {
         var _this = this;
@@ -17,7 +17,7 @@ var Bim = (function () {
                 try {
                     _this.loadScripts(_this.libHost + '/apps/bimserverjavascriptapi/js/', ['bimserverapiwebsocket.js', 'bimserverclient.js', 'bimserverapipromise.js', 'ifc2x3tc1.js', 'ifc4.js', 'model.js', 'translations_en.js']).then(function () {
                         resolve();
-                    }).catch(function (err) {
+                    })["catch"](function (err) {
                         reject(err);
                     });
                 }
@@ -29,7 +29,7 @@ var Bim = (function () {
                 try {
                     _this.loadScriptsSync(_this.localLibPrefix + _this.localLibHost, ['touch.js', 'require.js', 'xeogl.js', 'tree.js']).then(function () {
                         resolve();
-                    }).catch(function (err) {
+                    })["catch"](function (err) {
                         reject(err);
                     });
                 }
@@ -56,7 +56,7 @@ var Bim = (function () {
                 if (_this.libLoaded) {
                     return _this._connect().then(function (instance) {
                         resolve(instance);
-                    }).catch(function (err) {
+                    })["catch"](function (err) {
                         reject(err);
                     });
                 }
@@ -64,10 +64,10 @@ var Bim = (function () {
                     _this.init().then(function () {
                         _this._connect().then(function (instance) {
                             resolve(instance);
-                        }).catch(function (err) {
+                        })["catch"](function (err) {
                             reject(err);
                         });
-                    }).catch(function (err) {
+                    })["catch"](function (err) {
                         reject(err);
                     });
                 }
@@ -93,15 +93,15 @@ var Bim = (function () {
                         instance.loadLib().then(function () {
                             _this.instance = instance;
                             resolve(_this.instance);
-                        }).catch(function (err) {
+                        })["catch"](function (err) {
                             _this.instance = null;
                             reject(err);
                         });
-                    }).catch(function (err) {
+                    })["catch"](function (err) {
                         _this.instance = null;
                         reject(err);
                     });
-                }).catch(function (err) {
+                })["catch"](function (err) {
                     reject(err);
                 });
             });
@@ -152,7 +152,7 @@ var Bim = (function () {
                     if (index < counter)
                         _this.loadScript(baseAddress + filenames[index++], timeout).then(function () {
                             recursive();
-                        }).catch(function (err) {
+                        })["catch"](function (err) {
                             reject(err);
                         });
                     else

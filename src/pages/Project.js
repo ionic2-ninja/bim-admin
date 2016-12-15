@@ -7,7 +7,7 @@
 import React, {Component} from 'react';
 import {login, loadModel} from '../services/BimService';
 
-import {Row, Col, Tree, Button, Input, Form, Card, Modal} from 'antd';
+import {Row, Col, Tree, Button, Input, Form, Card, Modal, Icon} from 'antd';
 const TreeNode = Tree.TreeNode;
 const FormItem = Form.Item;
 
@@ -44,27 +44,180 @@ class Project extends Component {
             });
         });
 
-        this.draw()
+        // this.draw()
     }
 
-    draw() {
-        var ctx = document.getElementById('2dcanvas').getContext('2d');
-        var img = new Image();
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0);
-            ctx.beginPath();
-            ctx.moveTo(30, 96);
-            ctx.lineTo(70, 66);
-            ctx.lineTo(103, 76);
-            ctx.lineTo(170, 15);
-            ctx.stroke();
-        }
-        img.src = 'favicon.ico';
-    }
+    // draw() {
+    //     var ctx = document.getElementById('2dcanvas').getContext('2d');
+    //     var img = new Image();
+    //     img.onload = function () {
+    //         ctx.drawImage(img, 0, 0);
+    //         ctx.beginPath();
+    //         ctx.moveTo(30, 96);
+    //         ctx.lineTo(70, 66);
+    //         ctx.lineTo(103, 76);
+    //         ctx.lineTo(170, 15);
+    //         ctx.stroke();
+    //     }
+    //     img.src = 'favicon.ico';
+    // }
 
-    setVisible() {
+    confirm() {
         this.setState({
             visible: false,
+        })
+        this.domHide && (this.domHide.style.display = '');
+
+        let canvas = document.getElementById('capture_picture');
+        let image = canvas.toDataURL('image/png');
+        // document.getElementById('image11').src = image;
+        // console.log('dadew33', image);
+        let virtualImage = new Image();
+        virtualImage.src = image;
+        virtualImage.onload = () => {
+            var _canvas = new window['fabric'].Canvas('imageCnavas');
+            let imgInstance = new window.fabric.Image(virtualImage, {
+                left: 0,
+                top: 0,
+                width: 200,
+                height: 200,
+                angle: 0,
+                opacity: 1,
+                selectable: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                evented: false,
+                lockScalingFlip: true,
+                lockSkewingX: true,
+                lockSkewingY: true,
+                lockUniScaling: true
+
+            });
+            _canvas.add(imgInstance);
+        }
+
+        // this.state.viewControl.getSnapshot().then(data=> {
+        //     let virtualImage = new Image();
+        //     virtualImage.src = data.base64;
+        //     virtualImage.onload = () => {
+        //         var _canvas = new window['fabric'].Canvas('imageCnavas');
+        //         let imgInstance = new window.fabric.Image(virtualImage, {
+        //             left: 0,
+        //             top: 0,
+        //             width: 200,
+        //             height: 200,
+        //             angle: 0,
+        //             opacity: 1,
+        //             selectable: false,
+        //             lockMovementX: true,
+        //             lockMovementY: true,
+        //             lockRotation: true,
+        //             lockScalingX: true,
+        //             lockScalingY: true,
+        //             evented: false,
+        //             lockScalingFlip: true,
+        //             lockSkewingX: true,
+        //             lockSkewingY: true,
+        //             lockUniScaling: true
+        //
+        //         });
+        //         _canvas.add(imgInstance);
+        //     }
+        // })
+    }
+
+    cancel() {
+        this.setState({
+            visible: false,
+        })
+        this.domHide && (this.domHide.style.display = '');
+    }
+
+    addSquare() {
+        // console.log('addDescription');
+        // console.log(this.state.captureCanvas);
+        // var canvas = new window.fabric.Canvas('capture_picture');
+        // canvas.add(new window.fabric.Circle({radius: 30, fill: '#ffffff', top: 50, left: 50}));
+        // canvas.item(0).hasControls = true;
+        // canvas.setActiveObject(canvas.item(0));
+        // this.__canvases.push(canvas);
+
+        // var canvas = new window.fabric.Canvas('capture_picture');
+        // canvas.add(new window.fabric.Circle({
+        //     radius: 30,
+        //     fill: '#fff',
+        //     top: 100,
+        //     left: 100,
+        //     strokeWidth:1,
+        //     stroke: '#666'
+        // }));
+        // canvas.hoverCursor = 'pointer';
+        // this.__canvases.push(canvas);
+
+        // var canvas = new window.fabric.Canvas('capture_picture');
+
+        this._canvas.add(new window.fabric.Rect({
+            width: 50,
+            height: 50,
+            fill: '',
+            opacity: 1,
+            top: 250,
+            left: 500,
+            strokeWidth: 2,
+            stroke: 'rgb(118,156,204)'
+        }));
+        // this._canvas.item(0).hasRotatingPoint = true;
+
+        // canvas.add(new window.fabric.Circle({
+        //     radius: 40,
+        //     fill: '#fff',
+        //     top: 125,
+        //     left: 125,
+        //     scaleY: 0.5,
+        //     strokeWidth: 1,
+        //     stroke: '#666',
+        //     flipY: true
+        // }));
+        // canvas.item(1).hasRotatingPoint = true;
+
+        // this.__canvases.push(canvas);
+    }
+
+    addCircle() {
+        // console.log('click 41564d a dadsa');
+        // var canvas = new window.fabric.Canvas('capture_picture');
+        this._canvas.add(new window.fabric.Circle({
+            radius: 40,
+            fill: '',
+            opacity: 1,
+            top: 250,
+            left: 500,
+            scaleY: 0.5,
+            strokeWidth: 2,
+            stroke: 'rgb(118,156,204)',
+            flipY: true
+        }));
+        // canvas.item(1).hasRotatingPoint = true;
+
+        // this.__canvases.push(canvas);
+    }
+
+    addArrow() {
+        console.log('add arrow');
+        window.fabric.Image.fromURL(require('./1.png'),(img)=>{
+            img.scale(0.5).set({
+                left: 300,
+                top: 250,
+                angle: -15,
+                width: 200,
+                // clipTo: function (ctx) {
+                //     ctx.arc(0, 0, 300, 0, Math.PI * 2, true);
+                // }
+            });
+            this._canvas.add(img).setActiveObject(img);
         })
     }
 
@@ -84,13 +237,15 @@ class Project extends Component {
                     <Card title="部件名称">
                         <p>{this.state.selectedName}</p>
                     </Card>
+                    {/*<img src="favicon.ico" alt=""/>*/}
+                    {/*<img src={require('./1.png')} style={{width: 30, height: 30}} alt=""/>*/}
                     <Card title="部件信息" style={{marginTop: 20}}>
                         <div id="module_info"></div>
                     </Card>
                     <Card title="报告列表" style={{marginTop: 20}}>
-                        <img alt="" id='image11' style={{width: 200, height: 200}}/>
-                        <canvas id="imageCnavas" style={{width: 200, height: 200}}></canvas>
-                        <canvas id="2dcanvas" style={{width: 200, height: 200}}></canvas>
+                        {/*<img alt="" id='image11' style={{width: 200, height: 200}}/>*/}
+                        <canvas id="imageCnavas" width={300} height={200}></canvas>
+                        {/*<canvas id="2dcanvas" style={{width: 200, height: 200}}></canvas>*/}
                         {this._renderIssueList()}
                         <Form>
                             <FormItem>
@@ -106,16 +261,32 @@ class Project extends Component {
                         </Form>
                     </Card>
                 </Col>
-                <Modal visible={this.state.visible} onOk={this.setVisible.bind(this)}
-                       onCancel={this.setVisible.bind(this)}>
+                <Modal visible={this.state.visible} onOk={this.confirm.bind(this)}
+                       onCancel={this.cancel.bind(this)} wrapClassName="vertical-center-modal">
+                    {/*<div>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*<p>dddddddddd</p>*/}
+                    {/*</div>*/}
+                    <canvas id="capture_picture" width={950} height={500}></canvas>
                     <div>
-                        <p>dddddddddd</p>
-                        <p>dddddddddd</p>
-                        <p>dddddddddd</p>
-                        <p>dddddddddd</p>
-                        <p>dddddddddd</p>
-                        <p>dddddddddd</p>
-                        <p>dddddddddd</p>
+                        <Row type="flex" justify="space-between" className="capture-tool">
+                            {/*<img src={require('./2.png')} style={{width: 30, height: 30}} alt=""/>*/}
+                            <Col span={5} onClick={this.addArrow.bind(this)}>
+                                <div><Icon type="arrow-right" style={{fontSize: 50}}/></div>
+                            </Col>
+                            <Col span={5} onClick={this.addSquare.bind(this)}>
+                                <div className="capture-square"></div>
+                            </Col>
+                            <Col span={5} onClick={this.addCircle.bind(this)}>
+                                <div className="capture-circle"></div>
+                            </Col>
+                        </Row>
+                        <Input type='textarea' placeholder='Write your comment'/>
                     </div>
                 </Modal>
             </Row>
@@ -142,40 +313,59 @@ class Project extends Component {
     }
 
     getPic() {
-        let canvas = document.getElementById('bim').firstElementChild;
-        let image = canvas.toDataURL('image/png');
-        document.getElementById('image11').src = image;
-        // console.log('dadew33', image);
-        let virtualImage = new Image();
-        virtualImage.src = image;
-        virtualImage.onload = () => {
-            let _canvas = new window['fabric'].Canvas('imageCnavas');
-            let imgInstance = new window.fabric.Image(virtualImage, {
-                left: 0,
-                top: 0,
-                width: 200,
-                height: 200,
-                angle: 0,
-                opacity: 1,
-                selectable: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                lockRotation: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                evented: false,
-                lockScalingFlip: true,
-                lockSkewingX: true,
-                lockSkewingY: true,
-                lockUniScaling: true
+        // let canvas = document.getElementById('bim').firstElementChild;
+        // let image = canvas.toDataURL('image/png');
+        // console.log('image1545d 4545',image);
+        // this.state.viewControl.downloadSnapshot().then(data=> {
 
-            });
-            _canvas.add(imgInstance);
+        console.log('document.body.childNodes',document.body.firstElementChild)
+        let obj=document.body.firstElementChild
+        while(obj){
+            if(obj['tagName'].toLowerCase() == 'div' && obj.style.cursor == 'auto' && obj.style.zIndex == 100000){
+                // alert('444')
+                obj.style.display = 'none';
+                this.domHide = obj;
+                break
+            };
+            obj=obj.nextElementSibling
         }
-
-        // this.setState({
-        //     visible: true,
+        // document.body.childNodes.map(obj => {
+        //     if(obj['tagName']['toLowerCase']() == 'div' && obj.getAttribute('cursor') == 'auto' && obj.getAttribute('z-index') == 10000){
+        //         obj.style.display = 'none'
+        //     };
         // })
+
+        this.state.viewControl.getSnapshot().then(data=> {
+            let virtualImage = new Image();
+            virtualImage.src = data.base64;
+            virtualImage.onload = () => {
+                this._canvas = new window['fabric'].Canvas('capture_picture');
+                let imgInstance = new window.fabric.Image(virtualImage, {
+                    left: 250,
+                    top: 0,
+                    width: 500,
+                    height: 500,
+                    angle: 0,
+                    opacity: 1,
+                    selectable: false,
+                    lockMovementX: true,
+                    lockMovementY: true,
+                    lockRotation: true,
+                    lockScalingX: true,
+                    lockScalingY: true,
+                    evented: false,
+                    lockScalingFlip: true,
+                    lockSkewingX: true,
+                    lockSkewingY: true,
+                    lockUniScaling: true
+
+                });
+                this._canvas.add(imgInstance);
+            }
+        })
+        this.setState({
+            visible: true,
+        })
 
     }
 
