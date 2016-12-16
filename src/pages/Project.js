@@ -14,6 +14,8 @@ const FormItem = Form.Item;
 
 class Project extends Component {
 
+    // public newData = '';
+
     constructor(props) {
         super(props);
 
@@ -24,6 +26,8 @@ class Project extends Component {
             selectedName: '',
             issuesMap: {},
             visible: false,
+            issue: '',
+            showInputBox: false,
         };
     }
 
@@ -70,12 +74,15 @@ class Project extends Component {
 
         let canvas = document.getElementById('capture_picture');
         let image = canvas.toDataURL('image/png');
-        // document.getElementById('image11').src = image;
-        // console.log('dadew33', image);
         let virtualImage = new Image();
         virtualImage.src = image;
         virtualImage.onload = () => {
-            var _canvas = new window['fabric'].Canvas('imageCnavas');
+            if (!this._outerCanvas) {
+                this._outerCanvas = new window['fabric'].Canvas('imageCnavas');
+            } else {
+                this._outerCanvas.clear();
+                console.log('create _outerCanvas');
+            }
             let imgInstance = new window.fabric.Image(virtualImage, {
                 left: 0,
                 top: 0,
@@ -96,8 +103,10 @@ class Project extends Component {
                 lockUniScaling: true
 
             });
-            _canvas.add(imgInstance);
+            this._outerCanvas.add(imgInstance);
         }
+
+        this._canvas.clear();
 
         // this.state.viewControl.getSnapshot().then(data=> {
         //     let virtualImage = new Image();
@@ -134,31 +143,10 @@ class Project extends Component {
             visible: false,
         })
         this.domHide && (this.domHide.style.display = '');
+        this._canvas.clear();
     }
 
     addSquare() {
-        // console.log('addDescription');
-        // console.log(this.state.captureCanvas);
-        // var canvas = new window.fabric.Canvas('capture_picture');
-        // canvas.add(new window.fabric.Circle({radius: 30, fill: '#ffffff', top: 50, left: 50}));
-        // canvas.item(0).hasControls = true;
-        // canvas.setActiveObject(canvas.item(0));
-        // this.__canvases.push(canvas);
-
-        // var canvas = new window.fabric.Canvas('capture_picture');
-        // canvas.add(new window.fabric.Circle({
-        //     radius: 30,
-        //     fill: '#fff',
-        //     top: 100,
-        //     left: 100,
-        //     strokeWidth:1,
-        //     stroke: '#666'
-        // }));
-        // canvas.hoverCursor = 'pointer';
-        // this.__canvases.push(canvas);
-
-        // var canvas = new window.fabric.Canvas('capture_picture');
-
         this._canvas.add(new window.fabric.Rect({
             width: 50,
             height: 50,
@@ -169,26 +157,9 @@ class Project extends Component {
             strokeWidth: 2,
             stroke: 'rgb(118,156,204)'
         }));
-        // this._canvas.item(0).hasRotatingPoint = true;
-
-        // canvas.add(new window.fabric.Circle({
-        //     radius: 40,
-        //     fill: '#fff',
-        //     top: 125,
-        //     left: 125,
-        //     scaleY: 0.5,
-        //     strokeWidth: 1,
-        //     stroke: '#666',
-        //     flipY: true
-        // }));
-        // canvas.item(1).hasRotatingPoint = true;
-
-        // this.__canvases.push(canvas);
     }
 
     addCircle() {
-        // console.log('click 41564d a dadsa');
-        // var canvas = new window.fabric.Canvas('capture_picture');
         this._canvas.add(new window.fabric.Circle({
             radius: 40,
             fill: '',
@@ -201,13 +172,12 @@ class Project extends Component {
             flipY: true
         }));
         // canvas.item(1).hasRotatingPoint = true;
-
         // this.__canvases.push(canvas);
     }
 
     addArrow() {
         console.log('add arrow');
-        window.fabric.Image.fromURL(require('./1.png'),(img)=>{
+        window.fabric.Image.fromURL(require('../img/1.png'), (img)=> {
             img.scale(0.5).set({
                 left: 300,
                 top: 250,
@@ -221,125 +191,124 @@ class Project extends Component {
         })
     }
 
-    render() {
-        const {getFieldDecorator} = this.props.form;
-
-        return (
-            <Row type="flex" justify="space-between">
-                <Col span={5}>
-                    <div id="bim-tree" style={{position: 'relative', height: '100%', overflow: 'scroll'}}></div>
-                    {/*this._renderTree()*/}
-                </Col>
-                <Col span={14}>
-                    <div id="bim"/>
-                </Col>
-                <Col span={5}>
-                    <Card title="部件名称">
-                        <p>{this.state.selectedName}</p>
-                    </Card>
-                    {/*<img src="favicon.ico" alt=""/>*/}
-                    {/*<img src={require('./1.png')} style={{width: 30, height: 30}} alt=""/>*/}
-                    <Card title="部件信息" style={{marginTop: 20}}>
-                        <div id="module_info"></div>
-                    </Card>
-                    <Card title="报告列表" style={{marginTop: 20}}>
-                        {/*<img alt="" id='image11' style={{width: 200, height: 200}}/>*/}
-                        <canvas id="imageCnavas" width={300} height={200}></canvas>
-                        {/*<canvas id="2dcanvas" style={{width: 200, height: 200}}></canvas>*/}
-                        {this._renderIssueList()}
-                        <Form>
-                            <FormItem>
-                                {getFieldDecorator('issueContent', {
-                                    rules: [{required: true, message: '请输入报告详情!'}],
-                                })(
-                                    <Input type="textarea" rows={4} placeholder="报告详情"/>
-                                )}
-                            </FormItem>
-                            <FormItem>
-                                {this._renderIssueButton()}
-                            </FormItem>
-                        </Form>
-                    </Card>
-                </Col>
-                <Modal visible={this.state.visible} onOk={this.confirm.bind(this)}
-                       onCancel={this.cancel.bind(this)} wrapClassName="vertical-center-modal">
-                    {/*<div>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*<p>dddddddddd</p>*/}
-                    {/*</div>*/}
-                    <canvas id="capture_picture" width={950} height={500}></canvas>
-                    <div>
-                        <Row type="flex" justify="space-between" className="capture-tool">
-                            {/*<img src={require('./2.png')} style={{width: 30, height: 30}} alt=""/>*/}
-                            <Col span={5} onClick={this.addArrow.bind(this)}>
-                                <div><Icon type="arrow-right" style={{fontSize: 50}}/></div>
-                            </Col>
-                            <Col span={5} onClick={this.addSquare.bind(this)}>
-                                <div className="capture-square"></div>
-                            </Col>
-                            <Col span={5} onClick={this.addCircle.bind(this)}>
-                                <div className="capture-circle"></div>
-                            </Col>
-                        </Row>
-                        <Input type='textarea' placeholder='Write your comment'/>
-                    </div>
-                </Modal>
-            </Row>
-        );
-    }
-
-    _renderIssueButton() {
-        if (this.state.selectedKeys.length == 0) {
-            return (
-                <div>
-                    <Button type="primary" disabled>添加报告</Button>
-                    <Button type="primary" style={{marginLeft: 50}} onClick={this.getPic.bind(this)}>截图</Button>
-                </div>
-            );
+    write(e) {
+        e.preventDefault();
+        if (this.state.showInputBox) {
+            this.setState({
+                showInputBox: false,
+            })
+        } else {
+            this.setState({
+                showInputBox: true,
+            })
         }
 
-        return (
-            <div>
-                <Button type="primary" onClick={this.submitIssue.bind(this)}>
-                    添加报告
-                </Button>
-            </div>
-        )
     }
 
-    getPic() {
-        // let canvas = document.getElementById('bim').firstElementChild;
-        // let image = canvas.toDataURL('image/png');
-        // console.log('image1545d 4545',image);
-        // this.state.viewControl.downloadSnapshot().then(data=> {
+    addIssue() {
+        this._canvas.add(new window.fabric.Text(this.state.issue, {left: 300, top: 300, fontSize: 30}));
+        this.setState({
+            issue: ''
+        });
+        this.setState({
+            showInputBox: false,
+        })
+    }
 
-        console.log('document.body.childNodes',document.body.firstElementChild)
-        let obj=document.body.firstElementChild
-        while(obj){
-            if(obj['tagName'].toLowerCase() == 'div' && obj.style.cursor == 'auto' && obj.style.zIndex == 100000){
-                // alert('444')
+    getIssue(e) {
+        this.setState({
+            issue: e.target.value,
+        })
+    }
+
+    delete() {
+        console.log(this._canvas.getObjects())
+        let objects = this._canvas.getObjects();
+        objects.map(item => {
+            if (item.active) {
+                this._canvas.remove(item)
+            }
+        })
+        // this._canvas.remove(this._canvas.getObjects()[1]);
+    }
+
+    showCapture() {
+        if (this._outerCanvas) {
+            this.setState({
+                visible: true,
+            })
+        }
+        this.openModal();
+
+    }
+
+    openModal() {
+        let obj = document.body.firstElementChild
+        while (obj) {
+            if (obj['tagName'].toLowerCase() == 'div' && obj.style.cursor == 'auto' && obj.style.zIndex == 100000) {
                 obj.style.display = 'none';
                 this.domHide = obj;
                 break
-            };
-            obj=obj.nextElementSibling
+            }
+            ;
+            obj = obj.nextElementSibling
         }
+    }
+
+    getPic() {
+
+        // this.state.viewControl.downloadSnapshot().then(data=> {
+        // console.log('document.body.childNodes', document.body.firstElementChild)
+        this.openModal();
+        this.setState({
+            showInputBox: false,
+        })
         // document.body.childNodes.map(obj => {
         //     if(obj['tagName']['toLowerCase']() == 'div' && obj.getAttribute('cursor') == 'auto' && obj.getAttribute('z-index') == 10000){
         //         obj.style.display = 'none'
         //     };
         // })
 
+        // let canvas = document.getElementById('bim').firstElementChild;
+        // let image = canvas.toDataURL('image/png');
+        // // document.getElementById('image11').src = image;
+        // // console.log('dadew33', image);
+        // let virtualImage = new Image();
+        // virtualImage.src = image;
+        // virtualImage.onload = () => {
+        //     this._canvas = new window['fabric'].Canvas('capture_picture');
+        //     let imgInstance = new window.fabric.Image(virtualImage, {
+        //         left: 250,
+        //         top: 0,
+        //         width: 500,
+        //         height: 500,
+        //         angle: 0,
+        //         opacity: 1,
+        //         selectable: false,
+        //         lockMovementX: true,
+        //         lockMovementY: true,
+        //         lockRotation: true,
+        //         lockScalingX: true,
+        //         lockScalingY: true,
+        //         evented: false,
+        //         lockScalingFlip: true,
+        //         lockSkewingX: true,
+        //         lockSkewingY: true,
+        //         lockUniScaling: true
+        //
+        //     });
+        //     this._canvas.add(imgInstance);
+        // }
+
         this.state.viewControl.getSnapshot().then(data=> {
             let virtualImage = new Image();
             virtualImage.src = data.base64;
             virtualImage.onload = () => {
-                this._canvas = new window['fabric'].Canvas('capture_picture');
+                if (!this._canvas) {
+                    this._canvas = new window.fabric.Canvas('capture_picture');
+                } else {
+
+                }
                 let imgInstance = new window.fabric.Image(virtualImage, {
                     left: 250,
                     top: 0,
@@ -367,6 +336,120 @@ class Project extends Component {
             visible: true,
         })
 
+        setTimeout(()=> {
+            document.getElementsByClassName('canvas-container')[0].onclick = () => {
+                this.setState({
+                    showInputBox: false,
+                })
+            }
+        }, 500)
+
+    }
+
+    render() {
+        const {getFieldDecorator} = this.props.form;
+        let add = (
+            <Icon type="plus-square-o" onClick={this.addIssue.bind(this)}/>
+        )
+
+        let inputBox = this.state.showInputBox ? (
+            <div style={{width: 200}}><Input addonAfter={add} placeholder='Add text...' value={this.state.issue}
+                                             onChange={this.getIssue.bind(this)}/>
+            </div>) : null;
+
+        return (
+            <Row type="flex" justify="space-between">
+                <Col span={5}>
+                    <div id="bim-tree" style={{position: 'relative', height: '100%', overflow: 'scroll'}}></div>
+                    {/*this._renderTree()*/}
+                </Col>
+                <Col span={14}>
+                    <div id="bim"/>
+                </Col>
+                <Col span={5}>
+                    <Card title="部件名称">
+                        <p>{this.state.selectedName}</p>
+                    </Card>
+                    {/*<img src="favicon.ico" alt=""/>*/}
+                    {/*<img src={require('./1.png')} style={{width: 30, height: 30}} alt=""/>*/}
+                    <Card title="部件信息" style={{marginTop: 20}}>
+                        <div id="module_info"></div>
+                    </Card>
+                    <Card title="报告列表" style={{marginTop: 20}}>
+                        {/*<img alt="" id='image11' style={{width: 200, height: 200}}/>*/}
+                        <div onClick={this.showCapture.bind(this)}>
+                            <canvas id="imageCnavas" width={300} height={200}></canvas>
+                        </div>
+                        {/*<canvas id="2dcanvas" style={{width: 200, height: 200}}></canvas>*/}
+                        {this._renderIssueList()}
+                        <Form>
+                            <FormItem>
+                                {getFieldDecorator('issueContent', {
+                                    rules: [{required: true, message: '请输入报告详情!'}],
+                                })(
+                                    <Input type="textarea" rows={4} placeholder="报告详情"/>
+                                )}
+                            </FormItem>
+                            <FormItem>
+                                {this._renderIssueButton()}
+                            </FormItem>
+                        </Form>
+                    </Card>
+                </Col>
+                <Modal visible={this.state.visible} onOk={this.confirm.bind(this)}
+                       onCancel={this.cancel.bind(this)} wrapClassName="vertical-center-modal">
+                    <canvas id="capture_picture" width={950} height={500}></canvas>
+                    <div>
+                        {/*<div style={{width: 200}}><Input addonAfter={<Icon type="plus-square-o"/>}*/}
+                        {/*value={this.state.issue} onChange={this.getIssue.bind(this)}/>*/}
+                        {/*</div>*/}
+                        <Row><Col span={8} offset={15}>{inputBox}</Col></Row>
+                        <Row type="flex" justify="space-between" className="capture-tool">
+                            {/*<img src={require('./2.png')} style={{width: 30, height: 30}} alt=""/>*/}
+                            <Col span={4} onClick={this.addArrow.bind(this)}>
+                                <div style={{textAlign: 'center'}}><Icon type="arrow-right" style={{fontSize: 50}}/>
+                                </div>
+                            </Col>
+                            <Col span={4} onClick={this.addSquare.bind(this)}>
+                                <div className="capture-square"></div>
+                            </Col>
+                            <Col span={4} onClick={this.addCircle.bind(this)}>
+                                <div className="capture-circle"></div>
+                            </Col>
+                            <Col span={4} onClick={this.write.bind(this)}>
+                                <div style={{marginTop: 10, textAlign: 'center'}}><img src={require('../img/Text.png')}
+                                                                                       alt="" width={30}
+                                                                                       height={30}/></div>
+                            </Col>
+                            <Col span={4} onClick={this.delete.bind(this)}>
+                                <div style={{marginTop: 15, textAlign: 'center'}}><Icon type="delete"
+                                                                                        style={{fontSize: 30}}/></div>
+                            </Col>
+                        </Row>
+                        <Input type='textarea' placeholder='Write your comment'/>
+                    </div>
+                </Modal>
+            </Row>
+        );
+    }
+
+    _renderIssueButton() {
+        if (this.state.selectedKeys.length == 0) {
+            return (
+                <div>
+                    <Button type="primary" disabled>添加报告</Button>
+                    <Button type="primary" style={{marginLeft: 50}} onClick={this.getPic.bind(this)}>截图</Button>
+                </div>
+            );
+        }
+
+        return (
+            <div>
+                <Button type="primary" onClick={this.submitIssue.bind(this)}>
+                    添加报告
+                </Button>
+            </div>
+        )
     }
 
     submitIssue() {
