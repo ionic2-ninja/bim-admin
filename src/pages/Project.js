@@ -72,8 +72,10 @@ class Project extends Component {
         })
         this.domHide && (this.domHide.style.display = '');
 
-        let canvas = document.getElementById('capture_picture');
-        let image = canvas.toDataURL('image/png');
+        // let canvas = document.getElementById('capture_picture');
+        let image = this._canvas.toDataURL('image/png');
+
+        /*canvas*/
         let virtualImage = new Image();
         virtualImage.src = image;
         virtualImage.onload = () => {
@@ -106,7 +108,12 @@ class Project extends Component {
             this._outerCanvas.add(imgInstance);
         }
 
-        this._canvas.clear();
+        //img
+        // document.getElementById('canvasImg').src = image;
+
+        console.log(`this._canvas`,this._canvas);
+
+        // this._canvas.save();
 
         // this.state.viewControl.getSnapshot().then(data=> {
         //     let virtualImage = new Image();
@@ -143,7 +150,7 @@ class Project extends Component {
             visible: false,
         })
         this.domHide && (this.domHide.style.display = '');
-        this._canvas.clear();
+        // this._canvas.save();
     }
 
     addSquare() {
@@ -239,7 +246,7 @@ class Project extends Component {
             })
         }
         this.openModal();
-
+        // this._canvas.restore();
     }
 
     openModal() {
@@ -307,7 +314,7 @@ class Project extends Component {
                 if (!this._canvas) {
                     this._canvas = new window.fabric.Canvas('capture_picture');
                 } else {
-
+                    this._canvas.clear();
                 }
                 let imgInstance = new window.fabric.Image(virtualImage, {
                     left: 250,
@@ -378,7 +385,8 @@ class Project extends Component {
                     <Card title="报告列表" style={{marginTop: 20}}>
                         {/*<img alt="" id='image11' style={{width: 200, height: 200}}/>*/}
                         <div onClick={this.showCapture.bind(this)}>
-                            <canvas id="imageCnavas" width={300} height={200}></canvas>
+                            <canvas id="imageCnavas" width={250} height={200}></canvas>
+                            {/*<img id="canvasImg" alt="" style={{width: 300,height: 200}}/>*/}
                         </div>
                         {/*<canvas id="2dcanvas" style={{width: 200, height: 200}}></canvas>*/}
                         {this._renderIssueList()}
