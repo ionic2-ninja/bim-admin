@@ -14,7 +14,7 @@ const FormItem = Form.Item;
 
 class Project extends Component {
 
-    // public newData = '';
+    newTree = '';
 
     constructor(props) {
         super(props);
@@ -36,8 +36,8 @@ class Project extends Component {
             loadModel(this.props.location.query.oid, this.props.location.query.lastRevisionId, 'bim').then((viewControl) => {
                 viewControl.getTree().then((data) => {
                     console.log('viewControl.getTree()', data);
-                    viewControl.showModelTree(data, document.getElementById('bim-tree'));
-
+                    this.newTree = viewControl.showModelTree(data, document.getElementById('bim-tree'));
+                    // this.newTree.filter('door');
                     this.setState({
                         viewControl: viewControl,
                         treeData: data,
@@ -111,7 +111,7 @@ class Project extends Component {
         //img
         // document.getElementById('canvasImg').src = image;
 
-        console.log(`this._canvas`,this._canvas);
+        console.log(`this._canvas`, this._canvas);
 
         // this._canvas.save();
 
@@ -353,6 +353,10 @@ class Project extends Component {
 
     }
 
+    search(e) {
+        this.newTree.filter(e.target.value);
+    }
+
     render() {
         const {getFieldDecorator} = this.props.form;
         let add = (
@@ -367,6 +371,7 @@ class Project extends Component {
         return (
             <Row type="flex" justify="space-between">
                 <Col span={5}>
+                    <div style={{padding: 15}}><Input onChange={this.search.bind(this)} style={{width: 250}}/></div>
                     <div id="bim-tree" style={{position: 'relative', height: '100%', overflow: 'scroll'}}></div>
                     {/*this._renderTree()*/}
                 </Col>
