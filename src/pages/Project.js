@@ -456,6 +456,7 @@ class Project extends Component {
                 <Button type="primary" onClick={this.submitIssue.bind(this)}>
                     添加报告
                 </Button>
+                <Button type="primary" style={{marginLeft: 50}} onClick={this.getPic.bind(this)}>截图</Button>
             </div>
         )
     }
