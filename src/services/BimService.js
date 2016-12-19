@@ -8,12 +8,12 @@ const bim = new Bim();
 let instance = null;
 
 export function login(address, username, password) {
-  address = 'http://192.168.102.28:8085/bimserverwar-1.5.62';
-  username = 'admin@admin.com';
-  password = '123';
-  // address = 'http://122.114.175.19:8083/bimserverwar-1.5.62';
+  // address = 'http://192.168.102.28:8085/bimserverwar-1.5.62';
   // username = 'admin@admin.com';
   // password = '123';
+  address = 'http://122.114.175.19:8083/bimserverwar-1.5.62';
+  username = 'admin@admin.com';
+  password = '123';
 
   return bim.connect(address, username, password).then((ins) => {
     instance = ins;
